@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MsalService } from '@azure/msal-angular';
 import { UserService } from './services/user.service';
@@ -8,7 +8,7 @@ import { environment } from '../environments/environment';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet],
+  imports: [CommonModule, RouterOutlet, RouterLink],
   template: `
     <nav *ngIf="account">
       <div>
@@ -39,8 +39,8 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.msalService.instance.handleRedirectObservable().subscribe({
-      next: (result) => {
+    this.msalService.handleRedirectObservable().subscribe({
+      next: (result: any) => {
         if (result?.account) {
           this.msalService.instance.setActiveAccount(result.account);
           this.setAccount(result.account);
@@ -49,7 +49,7 @@ export class AppComponent implements OnInit {
           if (active) this.setAccount(active);
         }
       },
-      error: (err) => console.error('MSAL redirect error', err)
+      error: (err: unknown) => console.error('MSAL redirect error', err)
     });
 
     const active = this.msalService.instance.getActiveAccount();
